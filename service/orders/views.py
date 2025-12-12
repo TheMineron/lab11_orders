@@ -1,9 +1,9 @@
 from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from django_filters.rest_framework import DjangoFilterBackend
+
 from .models import Order, OrderItem
 from .serializers import OrderSerializer, OrderStatusUpdateSerializer
 
@@ -11,7 +11,6 @@ from .serializers import OrderSerializer, OrderStatusUpdateSerializer
 class OrderViewSet(viewsets.ModelViewSet):
 	queryset = Order.objects.all()
 	serializer_class = OrderSerializer
-	permission_classes = [IsAuthenticatedOrReadOnly]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 	filterset_fields = ['status', 'payment_status', 'customer_id', 'shipping_country']
 	search_fields = ['order_number', 'customer_name', 'customer_email']
@@ -98,4 +97,3 @@ class OrderViewSet(viewsets.ModelViewSet):
 		} for item in items]
 
 		return Response(data)
-	

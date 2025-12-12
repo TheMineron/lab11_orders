@@ -26,7 +26,7 @@ class OrderSerializer(serializers.ModelSerializer):
 		]
 		read_only_fields = [
 			'id', 'order_number', 'created_at', 'updated_at',
-			'paid_at', 'delivered_at', 'delivered_at'
+			'paid_at', 'delivered_at', 'delivered_at', 'subtotal', 'total_amount'
 		]
 
 	def create(self, validated_data):
