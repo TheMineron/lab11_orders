@@ -140,6 +140,7 @@ class OrderPaymentStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['payment_status']
+        extra_kwargs = {'payment_status': {'required': True}}
 
     def validate_payment_status(self, value):
         order = self.instance
@@ -156,9 +157,16 @@ class OrderPaymentStatusSerializer(serializers.ModelSerializer):
         return value
 
     def update(self, instance, validated_data):
+        payment_status = validated_data.get('payment_status')
+
+        if not payment_status:
+            raise serializers.ValidationError({
+                'payment_status': 'Payment status is required'
+            })
+
+        instance.payment_status = payment_status
         if validated_data.get('payment_status') == 'paid' and not instance.paid_at:
             instance.paid_at = timezone.now()
 
-        instance.payment_status = validated_data['payment_status']
         instance.save()
         return instance

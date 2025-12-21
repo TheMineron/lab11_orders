@@ -1,12 +1,12 @@
+from django.core.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from .models import Order, OrderItem
 from .serializers import OrderSerializer, OrderPaymentStatusSerializer, OrderItemSerializer
-from .validators import update_order_status  # Новая функция
+from .validators import update_order_status
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -15,7 +15,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 	filterset_fields = ['status', 'payment_status', 'customer_id', 'delivering_country']
 	search_fields = ['order_number', 'customer_name', 'customer_email']
-	ordering_fields = ['created_at', 'total_amount', 'updated_at']
+	ordering_fields = ['created_at', 'updated_at']
 	ordering = ['-created_at']
 
 	@action(detail=True, methods=['get'])
@@ -44,7 +44,6 @@ class OrderViewSet(viewsets.ModelViewSet):
 		order = self.get_object()
 		new_status = request.data.get('status')
 		notes = request.data.get('notes')
-
 		try:
 			order = update_order_status(
 				order=order,
